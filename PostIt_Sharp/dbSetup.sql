@@ -21,6 +21,31 @@ CREATE TABLE
         FOREIGN KEY (creatorId) REFERENCES accounts(id) ON DELETE CASCADE
     ) default charset utf8 COMMENT '';
 
+CREATE TABLE
+    IF NOT EXISTS pictures(
+        id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+        createdAt DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT 'Time Created',
+        updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Last Update',
+        imgUrl VARCHAR(500) NOT NULL,
+        creatorId VARCHAR(255) NOT NULL,
+        albumId INT NOT NULL,
+        FOREIGN KEY (creatorId) REFERENCES accounts(id) ON DELETE CASCADE,
+        FOREIGN KEY (albumId) REFERENCES albums(id) ON DELETE CASCADE
+    ) default charset utf8 COMMENT '';
+
+CREATE TABLE
+    IF NOT EXISTS collaborators(
+        id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+        createdAt DATETIME DEFAULT CURRENT_TIMESTAMP COMMENT 'Time Created',
+        updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT 'Last Update',
+        albumId INT NOT NULL,
+        accountId VARCHAR(255) NOT NULL,
+        FOREIGN KEY (albumId) REFERENCES albums(id),
+        FOREIGN KEY (accountId) REFERENCES accounts(id)
+    ) default charset utf8 COMMENT '';
+
+/* NOTE SQL STATEMENTS BELOW */
+
 DROP TABLE albums ;
 
 DELETE FROM albums WHERE id =1;
@@ -88,3 +113,33 @@ SELECT *
 FROM accounts act
     JOIN albums alb ON alb.creatorId = act.id
 WHERE act.id = '6526c4304dedc9f41b528495'
+
+INSERT INTO
+    pictures (imgUrl, creatorId, albumId)
+VALUES (
+        "https://images.unsplash.com/photo-1605548587049-8bda5bfdbbf7?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTAwfHxwaW5nJTIwcG9uZ3xlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&w=500&q=60",
+        '6526c4304dedc9f41b528495',
+        3
+    );
+
+DELETE FROM albums WHERE id = 3;
+
+INSERT INTO
+    collaborators(albumId, accountId)
+VALUES (
+        20,
+        '6526c4304dedc9f41b528495'
+    );
+
+SELECT * FROM collaborators;
+
+SELECT collab.*, album.title
+FROM collaborators collab
+    JOIN albums album ON album.id = collab.albumId
+WHERE
+    collab.accountId = '6526c4304dedc9f41b528495';
+
+SELECT *
+FROM collaborators collab
+    JOIN accounts act ON act.id = collab.accountId
+WHERE albumId = 3;

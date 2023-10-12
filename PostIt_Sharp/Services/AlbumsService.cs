@@ -40,4 +40,9 @@ public class AlbumsService
         _repo.Edit(album);
         return album;
     }
+
+    // internal List<Picture> GetPicturesByAlbumId()
+    // {
+    //     _pictureService.
+    // }
 }

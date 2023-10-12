@@ -7,3 +7,13 @@ public class Account
   public string Email { get; set; }
   public string Picture { get; set; }
 }
+
+
+public class AccountCollaboratorViewModel : Account
+{
+  public int CollaboratorId { get; set; }
+  public int AlbumId { get; set; }
+}
+
+
+

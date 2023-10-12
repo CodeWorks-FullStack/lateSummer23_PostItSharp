@@ -6,12 +6,16 @@ namespace PostIt_Sharp.Controllers;
 public class AlbumsController : ControllerBase
 {
     private readonly AlbumsService _albumsService;
+    private readonly PicturesService _picturesService;
+    private readonly CollaboratorsService _collabsService;
     private readonly Auth0Provider _auth0;
 
-    public AlbumsController(AlbumsService albumsService, Auth0Provider auth0)
+    public AlbumsController(AlbumsService albumsService, Auth0Provider auth0, PicturesService picturesService, CollaboratorsService collabsService)
     {
         _albumsService = albumsService;
         _auth0 = auth0;
+        _picturesService = picturesService;
+        _collabsService = collabsService;
     }
 
     [Authorize] // says you MUST be authorized before making this request...applies to req directly below
@@ -63,6 +67,38 @@ public class AlbumsController : ControllerBase
             return BadRequest(e.Message);
         }
     }
+
+
+    [HttpGet("{albumId}/pictures")]
+    public ActionResult<List<Picture>> GetPicturesByAlbumId(int albumId)
+    {
+        try
+        {
+            List<Picture> pictures = _picturesService.GetPicturesByAlbumId(albumId);
+            return pictures;
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
+    }
+
+
+    [HttpGet("{albumId}/collaborators")]
+    public ActionResult<List<AccountCollaboratorViewModel>> GetCollabsByAlbumId(int albumId)
+    {
+        try
+        {
+            List<AccountCollaboratorViewModel> collabs = _collabsService.GetCollabsByAlbumId(albumId);
+            return collabs;
+        }
+        catch (Exception e)
+        {
+            return BadRequest(e.Message);
+        }
+    }
+
+
 
     [Authorize]
     [HttpDelete("{albumId}")]

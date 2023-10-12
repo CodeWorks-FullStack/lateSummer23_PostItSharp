@@ -6,11 +6,13 @@ public class AccountController : ControllerBase
 {
   private readonly AccountService _accountService;
   private readonly Auth0Provider _auth0Provider;
+  private readonly CollaboratorsService _collabsService;
 
-  public AccountController(AccountService accountService, Auth0Provider auth0Provider)
+  public AccountController(AccountService accountService, Auth0Provider auth0Provider, CollaboratorsService collabsService)
   {
     _accountService = accountService;
     _auth0Provider = auth0Provider;
+    _collabsService = collabsService;
   }
 
   [HttpGet]
@@ -27,4 +29,22 @@ public class AccountController : ControllerBase
       return BadRequest(e.Message);
     }
   }
+
+  [Authorize]
+  [HttpGet("collaborators")]
+  public async Task<ActionResult<List<AlbumCollaboratorViewModel>>> GetAlbumsByAccount()
+  {
+    try
+    {
+      Account userInfo = await _auth0Provider.GetUserInfoAsync<Account>(HttpContext);
+      List<AlbumCollaboratorViewModel> myAlbums = _collabsService.GetAlbumsByAccount(userInfo.Id);
+
+      return myAlbums;
+    }
+    catch (Exception e)
+    {
+      return BadRequest(e.Message);
+    }
+  }
+
 }

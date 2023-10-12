@@ -10,3 +10,10 @@ public class Album
     public string CreatorId { get; set; }
     public Account Creator { get; set; }
 }
+
+public class AlbumCollaboratorViewModel : Album
+{
+    public int CollaboratorId { get; set; }
+    public string AccountId { get; set; }
+
+}
